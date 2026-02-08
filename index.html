@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOVE.exe 💗</title>
+
+<!-- RETRO FONT -->
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --pink-main: #f4a9bb;
+  --pink-dark: #c85a6a;
+  --pink-title: #e07a8a;
+  --green-light: #B7E2D4;
+  --green-main: #4FAE96;
+}
+
+* {
+  box-sizing: border-box;
+  image-rendering: pixelated;
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f6b7c8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'VT323', monospace;
+  overflow: hidden;
+}
+
+/* SCALE WRAPPER */
+.scale-wrapper {
+  width: 320px;
+  height: 480px;
+  transform-origin: center center;
+}
+
+/* WINDOW */
+.window {
+  width: 320px;
+  height: 480px;
+  background: var(--pink-main);
+  border: 6px solid var(--pink-dark);
+  box-shadow: 0 0 0 4px var(--green-light);
+  display: flex;
+  flex-direction: column;
+}
+
+/* TITLE BAR */
+.titlebar {
+  background: var(--pink-title);
+  color: white;
+  padding: 6px 8px;
+  font-size: 22px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* HEARTS */
+.hearts {
+  text-align: center;
+  padding: 4px 0;
+  font-size: 22px;
+  color: var(--green-main);
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  background: repeating-linear-gradient(
+    45deg,
+    #ffd6e8,
+    #ffd6e8 12px,
+    var(--green-light) 12px,
+    var(--green-light) 24px
+  );
+  padding: 12px 14px 18px; /* bottom space added */
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* TEXT */
+.text {
+  font-size: 24px;
+  margin-bottom: 2px; /* FIXED: Reduced from 6px */
+}
+
+/* GIF */
+.gif-container {
+  margin: 2px 0; /* FIXED: Reduced from 8px 0 */
+}
+
+/* BUTTON AREA */
+.buttons {
+  position: relative;
+  width: 100%;
+  height: 70px; /* smaller so it doesn't touch bottom */
+  margin-top: 2px; /* FIXED: Reduced from 8px */
+}
+
+/* BUTTONS */
+button {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  padding: 6px 18px;
+  border: 3px solid var(--green-main);
+  background: #ffd6e8;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+/* YES BUTTON */
+#yesBtn {
+  position: absolute;
+  left: 36px;
+  top: 16px; /* moved up */
+  z-index: 2;
+}
+
+#yesBtn:hover {
+  box-shadow: 0 0 20px rgba(79, 174, 150, 0.8), 0 0 30px rgba(79, 174, 150, 0.5);
+  background: #ffe4ec;
+}
+
+/* NO BUTTON */
+#noBtn {
+  position: absolute;
+  left: 180px;
+  top: 16px; /* moved up */
+  z-index: 3;
+  transition: left 0.35s ease, top 0.35s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+/* 🌸 LETTER BACKGROUND */
+.letter-bg {
+  background: linear-gradient(
+    to bottom,
+    #ffe4ec,
+    #e7f6f1
+  );
+}
+
+/* LETTER SCROLL */
+.letter-scroll {
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.letter-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.letter-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--green-main);
+}
+
+/* LETTER CARD */
+.letter-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 2px var(--green-light);
+  text-align: left;
+  margin-top: 6px;
+}
+
+.letter-card p {
+  font-size: 20px;
+  line-height: 1.3; /* FIXED: Tighter line spacing */
+}
+
+/* BACK ARROW */
+.back-arrow {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--green-main);
+  z-index: 5;
+}
+
+.footer-note {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+/* ========== NEW ADDITIONS BELOW ========== */
+
+/* YES BUTTON HOVER SPARKLES */
+.yes-hover-sparkle {
+  position: absolute;
+  font-size: 12px;
+  color: gold;
+  animation: yesSparkle 0.8s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes yesSparkle {
+  0% {
+    transform: scale(0.3) translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(-20px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* PS5 TROPHY POPUP */
+.ps5-trophy {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 3px solid #0f3460;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.2);
+  padding: 16px 20px;
+  border-radius: 12px;
+  z-index: 30;
+  display: none;
+  animation: trophyPopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  min-width: 260px;
+}
+
+.ps5-trophy-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ps5-trophy-icon {
+  font-size: 36px;
+  filter: drop-shadow(0 0 8px gold);
+  animation: trophyGlow 1.5s ease-in-out infinite;
+}
+
+.ps5-trophy-text {
+  flex: 1;
+  text-align: left;
+}
+
+.ps5-trophy-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.ps5-trophy-title {
+  font-size: 20px;
+  color: #ffd700;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes trophyPopIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes trophyGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px gold);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px gold);
+  }
+}
+
+/* EASTER EGG - SECRET HEART */
+.secret-heart {
+  position: absolute;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.secret-heart:hover {
+  opacity: 1;
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
+
+/* EASTER EGG MESSAGE */
+.easter-egg-message {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid var(--green-main);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  z-index: 25;
+  display: none;
+  animation: eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes eggPop {
+  0% {
+    transform: translateX(-50%) scale(0);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* SPARKLE EFFECT FOR EASTER EGGS */
+.sparkle {
+  position: absolute;
+  font-size: 14px;
+  color: gold;
+  animation: sparkle 1.4s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: scale(0.5) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2) translateY(-30px);
+    opacity: 0;
+  }
+}
+
+/* KONAMI CODE EFFECT */
+.konami-active {
+  animation: rainbow 2s linear infinite !important;
+}
+
+@keyframes rainbow {
+  0% { background: #ff6b9d; }
+  16% { background: #ffa06b; }
+  33% { background: #ffd56b; }
+  50% { background: #b4ff6b; }
+  66% { background: #6bffff; }
+  83% { background: #6b9dff; }
+  100% { background: #ff6b9d; }
+}
+
+/* FLOATING HEARTS FOR EASTER EGG */
+.float-heart {
+  position: absolute;
+  bottom: -10px;
+  font-size: 18px;
+  color: var(--green-main);
+  opacity: 0.8;
+  animation: floatUp 4s linear forwards;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-520px);
+    opacity: 0;
+  }
+}
+
+/* FIXED: HELP ICON */
+.help-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: var(--green-main);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.help-icon:hover {
+  transform: scale(1.1);
+  background: var(--pink-dark);
+}
+
+.help-popup {
+  position: absolute;
+  bottom: 45px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 3px solid var(--green-main);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  text-align: left;
+  z-index: 20;
+  display: none;
+  max-width: 280px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  animation: helpPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.help-popup.show {
+  display: block;
+}
+
+@keyframes helpPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.help-popup strong {
+  color: var(--green-main);
+  display: block;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.help-popup div {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.help-popup div:last-child {
+  margin-bottom: 0;
+}
+
+/* FIXED: MOBILE KONAMI BUTTON */
+.konami-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: var(--green-main);
+  border: 3px solid var(--pink-dark);
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.konami-button:active {
+  transform: scale(0.9);
+}
+
+/* REMOVED MEDIA QUERY - NOW VISIBLE ON ALL SCREENS */
+</style>
+</head>
+
+<body>
+
+<!-- FIXED: MOBILE KONAMI BUTTON -->
+<div class="konami-button" id="konamiBtn">🎮</div>
+
+<div class="scale-wrapper" id="scaler">
+  <div class="window">
+
+    <!-- PS5 TROPHY POPUP (NEW) -->
+    <div class="ps5-trophy" id="ps5Trophy">
+      <div class="ps5-trophy-content">
+        <div class="ps5-trophy-icon">🏆</div>
+        <div class="ps5-trophy-text">
+          <div class="ps5-trophy-label">Trophy Unlocked</div>
+          <div class="ps5-trophy-title">My Valentine!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EASTER EGG MESSAGE (NEW) -->
+    <div class="easter-egg-message" id="easterEggMsg"></div>
+
+    <div class="titlebar">
+      <span>LOVE.exe</span>
+      <span>✖</span>
+    </div>
+
+    <div class="hearts">
+      <span id="heart1">♡</span> <span id="heart2">♡</span> <span id="heart3">♡</span>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div class="content" id="questionScreen">
+      <!-- SECRET HEARTS (NEW - EASTER EGG) -->
+      <div class="secret-heart" style="top: 10px; left: 10px;" data-message="Me when I love you! 💕">💗</div>
+      <div class="secret-heart" style="top: 10px; right: 10px;" data-message="Keep it up, baby! ✨">💝</div>
+      <div class="secret-heart" style="bottom: 85px; left: 15px;" data-message="I hid these just for you 🥰">💖</div>
+
+      <div class="text">Will you be my Valentine?</div>
+
+      <div class="gif-container">
+        <div class="tenor-gif-embed"
+          data-postid="14345055558441530836"
+          data-share-method="host"
+          data-aspect-ratio="1.12245"
+          data-width="100%">
+        </div>
+      </div>
+
+      <div class="buttons" id="buttonArea">
+        <button id="yesBtn">YES</button>
+        <button id="noBtn">NO</button>
+      </div>
+      
+      <!-- FIXED: HELP ICON INSTEAD OF HINT TEXT -->
+      <div class="help-icon" id="helpIcon">?</div>
+      <div class="help-popup" id="helpPopup">
+        <strong>🔍 Easter Egg Hints:</strong>
+        <div>💗 Look for hidden hearts around the screen</div>
+        <div>💻 Triple click "LOVE.exe" in the title bar</div>
+        <div>🎮 Try the Konami code (or swipe on mobile button)</div>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="content hidden" id="menuScreen">
+      <!-- FIXED: BACK ARROW TO QUESTION SCREEN -->
+      <div class="back-arrow" id="backToQuestion">←</div>
+      
+      <!-- SECRET HEART IN MENU (NEW - EASTER EGG) -->
+      <div class="secret-heart" style="bottom: 15px; right: 15px;" data-message="Hehehe 💗">💘</div>
+
+      <div class="text">YIPPIE 💗</div>
+
+      <div class="gif-container">
+        <div class="tenor-gif-embed"
+          data-postid="6508383405014947627"
+          data-share-method="host"
+          data-aspect-ratio="1"
+          data-width="100%">
+        </div>
+      </div>
+
+      <button id="letterBtn" style="margin-top: 12px;">FOR YOU</button>
+    </div>
+
+    <!-- LETTER -->
+    <div class="content hidden letter-bg letter-scroll" id="letterScreen">
+
+      <div class="back-arrow" id="backArrow">←</div>
+
+      <div class="text">A letter for you ✉️</div>
+
+      <div class="letter-card">
+        <p>
+          Hi Baby,<br><br>
+
+          Being with you feels easy in the best way. You make everything more fun just by being there,
+          whether we're laughing at something dumb, sitting quietly together, or completely locked in
+          on a movie we've both already seen but somehow never get tired of watching again.<br><br>
+
+          You're the best Fortnite buddy I could ever ask for.
+          Playing with you never feels like just a game, it's my favorite way to spend time with you,
+          win or lose. Same with movie nights. Same with everything.
+          It's not about what we're doing, but that it's you.<br><br>
+
+          I wouldn't trade that for anything. I wouldn't change it.
+          I wouldn't want it any other way.<br><br>
+
+          I'm really grateful for you, for your laugh, your presence, and the way you make things feel
+          warmer just by being yourself. I'm glad it's you, and I'm happy I get to share these moments
+          with you.<br><br>
+
+          Love, <bt><br>
+
+          Your Habibti
+        </p>
+      </div>
+
+      <div class="footer-note">I Love You 💗</div>
+    </div>
+
+  </div>
+</div>
+
+<script async src="https://tenor.com/embed.js"></script>
+
+<script>
+/* SCALE */
+function scaleGame() {
+  const scale = Math.min(
+    window.innerWidth / 320,
+    window.innerHeight / 480
+  );
+  document.getElementById("scaler").style.transform = `scale(${scale})`;
+}
+window.addEventListener("resize", scaleGame);
+scaleGame();
+
+/* ELEMENTS */
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const buttonArea = document.getElementById("buttonArea");
+
+const questionScreen = document.getElementById("questionScreen");
+const menuScreen = document.getElementById("menuScreen");
+const letterScreen = document.getElementById("letterScreen");
+
+const letterBtn = document.getElementById("letterBtn");
+const backArrow = document.getElementById("backArrow");
+const backToQuestion = document.getElementById("backToQuestion"); /* FIXED: NEW */
+
+/* STATE */
+let noClickCount = 0;
+const noTexts = [
+  "NO",
+  "pls baby",
+  "i'm begging you",
+  "js say yes!",
+  "no isn't an option >:(",
+  "CLICK YES NEOW!"
+];
+
+/* NO RUN */
+function moveNo() {
+  const maxX = buttonArea.clientWidth - noBtn.offsetWidth;
+  const maxY = buttonArea.clientHeight - noBtn.offsetHeight;
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+}
+
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  moveNo();
+});
+
+/* NO CLICK */
+noBtn.addEventListener("click", e => {
+  e.preventDefault();
+  noClickCount++;
+  noBtn.innerText = noTexts[Math.min(noClickCount, noTexts.length - 1)];
+  yesBtn.style.transform = `scale(${Math.min(1 + noClickCount * 0.15, 1.8)})`;
+  moveNo();
+});
+
+/* YES */
+yesBtn.addEventListener("click", () => {
+  questionScreen.classList.add("hidden");
+  menuScreen.classList.remove("hidden");
+
+  // ========== NEW: PS5 TROPHY POPUP ==========
+  const ps5Trophy = document.getElementById("ps5Trophy");
+  ps5Trophy.style.display = "block";
+  
+  setTimeout(() => {
+    ps5Trophy.style.animation = "trophyPopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+    setTimeout(() => {
+      ps5Trophy.style.display = "none";
+      ps5Trophy.style.animation = "";
+    }, 500);
+  }, 3000);
+});
+
+/* LETTER */
+letterBtn.addEventListener("click", () => {
+  menuScreen.classList.add("hidden");
+  letterScreen.classList.remove("hidden");
+});
+
+/* BACK */
+backArrow.addEventListener("click", () => {
+  letterScreen.classList.add("hidden");
+  menuScreen.classList.remove("hidden");
+});
+
+/* FIXED: BACK TO QUESTION SCREEN */
+backToQuestion.addEventListener("click", () => {
+  menuScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+});
+
+/* ========== NEW CODE BELOW ========== */
+
+/* YES BUTTON HOVER SPARKLES */
+let yesHoverInterval;
+
+yesBtn.addEventListener("mouseenter", () => {
+  yesHoverInterval = setInterval(() => {
+    const sparkle = document.createElement("div");
+    sparkle.className = "yes-hover-sparkle";
+    sparkle.innerText = "✨";
+    
+    const btnRect = yesBtn.getBoundingClientRect();
+    const contentRect = questionScreen.getBoundingClientRect();
+    
+    sparkle.style.left = (btnRect.left - contentRect.left + Math.random() * btnRect.width) + "px";
+    sparkle.style.top = (btnRect.top - contentRect.top + Math.random() * btnRect.height) + "px";
+    
+    questionScreen.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 800);
+  }, 150);
+});
+
+yesBtn.addEventListener("mouseleave", () => {
+  clearInterval(yesHoverInterval);
+});
+
+/* EASTER EGG - SECRET HEARTS */
+const secretHearts = document.querySelectorAll(".secret-heart");
+const easterEggMsg = document.getElementById("easterEggMsg");
+let foundHearts = 0;
+
+// ========== NEW: HEART FILLING TRACKER ==========
+let allHeartsFound = false;
+let konamiActivated = false;
+let titleTripleClicked = false;
+
+function updateHearts() {
+  let count = 0;
+  if (allHeartsFound) count++;
+  if (konamiActivated) count++;
+  if (titleTripleClicked) count++;
+  
+  if (count >= 1) document.getElementById("heart1").innerText = "♥";
+  if (count >= 2) document.getElementById("heart2").innerText = "♥";
+  if (count >= 3) document.getElementById("heart3").innerText = "♥";
+}
+
+function checkAllEasterEggsFound() {
+  updateHearts();
+  
+  if (allHeartsFound && konamiActivated && titleTripleClicked) {
+    setTimeout(() => {
+      easterEggMsg.innerHTML = "🎉 MASTER EASTER EGG HUNTER! 🎉<br>You really went through all that just to impress me?<br>...okay fine, you're cute. 😳💗";
+      easterEggMsg.style.display = "block";
+      easterEggMsg.style.fontSize = "18px";
+      easterEggMsg.style.padding = "14px 18px";
+      
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          const sparkle = document.createElement("div");
+          sparkle.className = "sparkle";
+          sparkle.innerText = ["✨", "💕", "🌟", "💖"][Math.floor(Math.random() * 4)];
+          sparkle.style.left = Math.random() * 300 + "px";
+          sparkle.style.top = Math.random() * 400 + "px";
+          sparkle.style.fontSize = "20px";
+          document.querySelector(".window").appendChild(sparkle);
+          setTimeout(() => sparkle.remove(), 1400);
+        }, i * 80);
+      }
+      
+      setTimeout(() => {
+        easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+        setTimeout(() => {
+          easterEggMsg.style.display = "none";
+          easterEggMsg.style.animation = "";
+          easterEggMsg.style.fontSize = "16px";
+          easterEggMsg.style.padding = "10px 16px";
+        }, 400);
+      }, 5000);
+    }, 1000);
+  }
+}
+
+
+secretHearts.forEach(heart => {
+  heart.addEventListener("click", function() {
+    if (this.style.opacity === "1") return;
+    
+    foundHearts++;
+    this.style.opacity = "1";
+    this.style.animation = "pulse 0.5s ease-in-out 3";
+    
+    const message = this.getAttribute("data-message");
+    easterEggMsg.textContent = message;
+    easterEggMsg.style.display = "block";
+    
+    for (let i = 0; i < 5; i++) {
+      const confetti = document.createElement("div");
+      confetti.className = "sparkle";
+      confetti.innerText = ["💕", "💖", "💗", "💝", "💘"][Math.floor(Math.random() * 5)];
+      confetti.style.left = this.style.left;
+      confetti.style.top = this.style.top;
+      confetti.style.fontSize = "16px";
+      this.parentElement.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 1400);
+    }
+    
+    setTimeout(() => {
+      easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+      setTimeout(() => {
+        easterEggMsg.style.display = "none";
+        easterEggMsg.style.animation = "";
+      }, 400);
+    }, 2000);
+    
+    if (foundHearts === secretHearts.length) {
+      allHeartsFound = true; // ========== NEW ==========
+      setTimeout(() => {
+        easterEggMsg.textContent = "🎉 You found them all! You're the best! 🎉";
+        easterEggMsg.style.display = "block";
+        setTimeout(() => {
+          easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+          setTimeout(() => {
+            easterEggMsg.style.display = "none";
+            easterEggMsg.style.animation = "";
+            checkAllEasterEggsFound(); // ========== NEW ==========
+          }, 400);
+        }, 3000);
+      }, 2500);
+    }
+  });
+});
+
+/* FIXED: EASTER EGG - KONAMI CODE (CROSS-BROWSER + MOBILE) */
+const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiIndex = 0;
+
+function activateKonami() {
+  konamiActivated = true;
+  document.querySelector(".window").classList.add("konami-active");
+  easterEggMsg.textContent = "🎮 KONAMI CODE ACTIVATED! 🌈";
+  easterEggMsg.style.display = "block";
+  
+  setTimeout(() => {
+    easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+    setTimeout(() => {
+      easterEggMsg.style.display = "none";
+      easterEggMsg.style.animation = "";
+      // REMOVED: document.querySelector(".window").classList.remove("konami-active");
+      checkAllEasterEggsFound();
+    }, 400);
+  }, 4000);
+  
+  konamiIndex = 0;
+}
+
+// Desktop keyboard support
+document.addEventListener("keydown", (e) => {
+  const key = e.key.toLowerCase();
+  const expectedKey = konamiCode[konamiIndex].toLowerCase();
+  
+  // Accept both uppercase and lowercase for 'b' and 'a'
+  if (key === expectedKey || (key.startsWith('arrow') && e.key === konamiCode[konamiIndex]) || 
+      (expectedKey === 'b' && (e.key === 'b' || e.key === 'B')) ||
+      (expectedKey === 'a' && (e.key === 'a' || e.key === 'A'))) {
+    konamiIndex++;
+    if (konamiIndex === konamiCode.length) {
+      activateKonami();
+    }
+  } else {
+    konamiIndex = 0;
+  }
+});
+
+// Mobile button support
+const konamiBtn = document.getElementById("konamiBtn");
+let mobileTapSequence = [];
+const mobileKonamiPattern = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'tap', 'tap'];
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+konamiBtn.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+konamiBtn.addEventListener('touchend', (e) => {
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+  
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+  
+  let direction;
+  
+  if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+    direction = 'tap';
+  } else if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    direction = deltaX > 0 ? 'right' : 'left';
+  } else {
+    direction = deltaY > 0 ? 'down' : 'up';
+  }
+  
+  mobileTapSequence.push(direction);
+  
+  if (mobileTapSequence.length > mobileKonamiPattern.length) {
+    mobileTapSequence.shift();
+  }
+  
+  if (JSON.stringify(mobileTapSequence) === JSON.stringify(mobileKonamiPattern)) {
+    activateKonami();
+    mobileTapSequence = [];
+  }
+});
+
+/* EASTER EGG - TRIPLE CLICK TITLE */
+let titleClickCount = 0;
+let titleClickTimer;
+
+document.querySelector(".titlebar span:first-child").addEventListener("click", () => {
+  titleClickCount++;
+  clearTimeout(titleClickTimer);
+  
+  if (titleClickCount === 3) {
+    titleTripleClicked = true; // ========== NEW ==========
+    easterEggMsg.textContent = "💻 System Message: Love levels at maximum! 💗";
+    easterEggMsg.style.display = "block";
+    
+    for (let i = 0; i < 15; i++) {
+      setTimeout(() => {
+        const h = document.createElement("div");
+        h.className = "float-heart";
+        h.style.left = Math.random() * 280 + "px";
+        h.style.fontSize = Math.random() * 20 + 30 + "px"; /* FIXED: Bigger (30-50px instead of 14-24px) */
+        h.style.color = ['#ff6b9d', '#ff1744', '#ff4081', '#e91e63'][Math.floor(Math.random() * 4)]; /* FIXED: Red and pink colors */
+        h.innerText = "♥";
+        document.querySelector(".window").appendChild(h);
+        setTimeout(() => h.remove(), 4000);
+      }, i * 100);
+    }
+    
+    setTimeout(() => {
+      easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
+      setTimeout(() => {
+        easterEggMsg.style.display = "none";
+        easterEggMsg.style.animation = "";
+        checkAllEasterEggsFound(); // ========== NEW ==========
+      }, 400);
+    }, 3000);
+    
+    titleClickCount = 0;
+  }
+  
+  titleClickTimer = setTimeout(() => {
+    titleClickCount = 0;
+  }, 500);
+});
+
+/* FIXED: HELP ICON TOGGLE */
+const helpIcon = document.getElementById("helpIcon");
+const helpPopup = document.getElementById("helpPopup");
+
+helpIcon.addEventListener("click", (e) => {
+  e.stopPropagation();
+  helpPopup.classList.toggle("show");
+});
+
+// Close help popup when clicking anywhere else
+document.addEventListener("click", (e) => {
+  if (!helpIcon.contains(e.target) && !helpPopup.contains(e.target)) {
+    helpPopup.classList.remove("show");
+  }
+});
+</script>
+
+</body>
+</html>
