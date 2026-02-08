@@ -478,7 +478,7 @@ button:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%, -50%) scale(0); /* FIXED: Centered on screen */
   background: rgba(255, 255, 255, 0.98);
   border: 3px solid var(--green-main);
   border-radius: 10px;
@@ -489,11 +489,22 @@ button:hover {
   display: none;
   max-width: 280px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  animation: helpPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: konamiPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 .konami-instruction.show {
   display: block;
+}
+
+@keyframes konamiPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 
 .konami-instruction strong {
@@ -511,25 +522,69 @@ button:hover {
 /* FIXED: MOBILE KONAMI BUTTON */
 .konami-button {
   position: fixed;
-  bottom: 20px;
-  left: 20px; /* FIXED: Moved to left side */
+  bottom: 35px; /* FIXED: Lowered from 90px so it doesn't go up too high */
+  left: 50%; /* FIXED: Centered horizontally */
+  transform: translateX(-50%); /* FIXED: Center alignment */
   width: 60px; /* FIXED: Made bigger from 50px */
   height: 60px; /* FIXED: Made bigger from 50px */
   background: var(--green-main);
   border: 3px solid var(--pink-dark);
   border-radius: 50%;
-  font-size: 28px; /* FIXED: Bigger emoji from 24px */
+  font-size: 20px; /* FIXED: Adjusted for d-pad arrows */
   display: flex !important; /* FIXED: Force display */
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  line-height: 1;
+  opacity: 1;
+}
+
+.konami-button.hidden {
+  transform: translateX(-50%) translateY(100px);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .konami-button:active {
-  transform: scale(0.9);
+  transform: translateX(-50%) scale(0.9); /* FIXED: Maintain center on click */
+}
+
+/* TOGGLE BUTTON FOR D-PAD */
+.dpad-toggle {
+  position: fixed;
+  bottom: -15px; /* FIXED: Slightly hidden below screen edge */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 30px;
+  background: var(--green-main);
+  border: 3px solid var(--pink-dark);
+  border-radius: 10px 10px 0 0; /* FIXED: Rounded only on top corners */
+  font-size: 20px;
+  display: flex !important;
+  align-items: flex-start; /* FIXED: Align arrow to top */
+  justify-content: center;
+  padding-top: 2px;
+  cursor: pointer;
+  z-index: 101;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, bottom 0.2s ease;
+  color: white;
+}
+
+.dpad-toggle:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.dpad-toggle.rotated {
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.dpad-toggle.rotated:active {
+  transform: translateX(-50%) rotate(180deg) scale(0.95);
 }
 
 /* REMOVED MEDIA QUERY - NOW VISIBLE ON ALL SCREENS */
@@ -539,7 +594,12 @@ button:hover {
 <body>
 
 <!-- FIXED: MOBILE KONAMI BUTTON -->
-<div class="konami-button" id="konamiBtn">🎮</div>
+<div class="konami-button hidden" id="konamiBtn">
+  <img src="dpad.png" alt="D-Pad" style="width: 70%; height: 70%; object-fit: contain;">
+</div>
+
+<!-- D-PAD TOGGLE BUTTON -->
+<div class="dpad-toggle" id="dpadToggle">▲</div>
 
 <!-- KONAMI INSTRUCTION POPUP -->
 <div class="konami-instruction" id="konamiInstruction">
@@ -644,15 +704,15 @@ button:hover {
 
           Being with you feels easy in the best way. You make everything more fun just by being there,
           whether we're laughing at something dumb, sitting quietly together, or completely locked in
-          on a movie or show we've both already seen but somehow never get tired of watching again.<br><br>
+          on fortnite, a movie, or show.<br><br>
 
-          You're the best Fortnite buddy I could ever ask for.
+          You're the best gaming partner I could ever ask for.
           Playing with you never feels like just a game, it's my favorite way to spend time with you,
           win or lose. Same with movie nights. Same with everything.
           It's not about what we're doing, but that it's you.<br><br>
 
-          I wouldn't trade that for anything. I wouldn't change it.
-          I wouldn't want it any other way.<br><br>
+          I wouldn't trade that for anything. I wouldn't change it and
+          I definitely wouldn't want it any other way.<br><br>
 
           I'm really grateful for you, for your laugh, your presence, and the way you make things feel
           warmer just by being yourself. I'm glad it's you, and I'm happy I get to share these moments
@@ -703,7 +763,7 @@ const noTexts = [
   "i'm begging you",
   "js say yes!",
   "no isn't an option >:(",
-  "OKAY YES 💗"
+  "CLICK YES RN!"
 ];
 
 /* NO RUN */
@@ -821,7 +881,7 @@ function checkAllEasterEggsFound() {
   
   if (allHeartsFound && konamiActivated && titleTripleClicked) {
     setTimeout(() => {
-      easterEggMsg.innerHTML = "🎉 MASTER EASTER EGG HUNTER! 🎉<br>You really went through all that just to impress me?<br>...okay fine, you're cute. 😳💗<br><br>I love you so much baby 💕";
+      easterEggMsg.innerHTML = "🎉 MASTER EASTER EGG HUNTER! 🎉<br>You really went through all that for me?<br>You're the most beautiful woman to exist 😳💗<br><br>I love you so much baby 💕";
       easterEggMsg.style.display = "block";
       easterEggMsg.style.fontSize = "18px";
       easterEggMsg.style.padding = "14px 18px";
@@ -851,7 +911,6 @@ function checkAllEasterEggsFound() {
     }, 1000);
   }
 }
-
 
 secretHearts.forEach(heart => {
   heart.addEventListener("click", function() {
@@ -887,7 +946,7 @@ secretHearts.forEach(heart => {
     if (foundHearts === secretHearts.length) {
       allHeartsFound = true; // ========== NEW ==========
       setTimeout(() => {
-        easterEggMsg.textContent = "🎉 You found them all! You're the best! 🎉";
+        easterEggMsg.textContent = "🎉 You found all of the hearts! You're the best! 🎉";
         easterEggMsg.style.display = "block";
         setTimeout(() => {
           easterEggMsg.style.animation = "eggPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) reverse forwards";
@@ -946,12 +1005,26 @@ document.addEventListener("keydown", (e) => {
 // Mobile button support
 const konamiBtn = document.getElementById("konamiBtn");
 const konamiInstruction = document.getElementById("konamiInstruction");
+const dpadToggle = document.getElementById("dpadToggle");
 let mobileTapSequence = [];
 const mobileKonamiPattern = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'tap', 'tap'];
 
 let touchStartX = 0;
 let touchStartY = 0;
 let longPressTimer;
+
+// Toggle d-pad visibility
+dpadToggle.addEventListener('click', () => {
+  konamiBtn.classList.toggle('hidden');
+  dpadToggle.classList.toggle('rotated');
+});
+
+// Also toggle with touch for mobile
+dpadToggle.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  konamiBtn.classList.toggle('hidden');
+  dpadToggle.classList.toggle('rotated');
+});
 
 // Show instructions on long press
 konamiBtn.addEventListener('touchstart', (e) => {
