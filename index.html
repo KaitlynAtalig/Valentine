@@ -484,7 +484,7 @@ button:hover {
   border: 3px solid var(--pink-dark);
   border-radius: 50%;
   font-size: 24px;
-  display: flex;
+  display: flex !important; /* FIXED: Force display */
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -535,8 +535,8 @@ button:hover {
     <!-- QUESTION SCREEN -->
     <div class="content" id="questionScreen">
       <!-- SECRET HEARTS (NEW - EASTER EGG) -->
-      <div class="secret-heart" style="top: 10px; left: 10px;" data-message="Me when I love you! 💕">💗</div>
-      <div class="secret-heart" style="top: 10px; right: 10px;" data-message="Keep it up, baby! ✨">💝</div>
+      <div class="secret-heart" style="top: 10px; left: 10px;" data-message="You found my first secret! 💕">💗</div>
+      <div class="secret-heart" style="top: 10px; right: 10px;" data-message="Keep looking... there's more! ✨">💝</div>
       <div class="secret-heart" style="bottom: 85px; left: 15px;" data-message="I hid these just for you 🥰">💖</div>
 
       <div class="text">Will you be my Valentine?</div>
@@ -571,9 +571,9 @@ button:hover {
       <div class="back-arrow" id="backToQuestion">←</div>
       
       <!-- SECRET HEART IN MENU (NEW - EASTER EGG) -->
-      <div class="secret-heart" style="bottom: 15px; right: 15px;" data-message="Hehehe 💗">💘</div>
+      <div class="secret-heart" style="bottom: 15px; right: 15px;" data-message="One more here too! 💗">💘</div>
 
-      <div class="text">YIPPIE 💗</div>
+      <div class="text">HOORAY 💗</div>
 
       <div class="gif-container">
         <div class="tenor-gif-embed"
@@ -614,13 +614,11 @@ button:hover {
           warmer just by being yourself. I'm glad it's you, and I'm happy I get to share these moments
           with you.<br><br>
 
-          Love, <bt><br>
-
-          Your Habibti
+          Your Habibti 💗
         </p>
       </div>
 
-      <div class="footer-note">I Love You 💗</div>
+      <div class="footer-note">made with love 💗</div>
     </div>
 
   </div>
@@ -661,7 +659,7 @@ const noTexts = [
   "i'm begging you",
   "js say yes!",
   "no isn't an option >:(",
-  "CLICK YES NEOW!"
+  "OKAY YES 💗"
 ];
 
 /* NO RUN */
@@ -676,6 +674,10 @@ noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", e => {
   e.preventDefault();
   moveNo();
+  /* FIXED: Add text change on mobile tap */
+  noClickCount++;
+  noBtn.innerText = noTexts[Math.min(noClickCount, noTexts.length - 1)];
+  yesBtn.style.transform = `scale(${Math.min(1 + noClickCount * 0.15, 1.8)})`;
 });
 
 /* NO CLICK */
