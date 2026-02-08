@@ -473,6 +473,41 @@ button:hover {
   margin-bottom: 0;
 }
 
+/* KONAMI INSTRUCTION POPUP */
+.konami-instruction {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: rgba(255, 255, 255, 0.98);
+  border: 3px solid var(--green-main);
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 16px;
+  text-align: center;
+  z-index: 110;
+  display: none;
+  max-width: 280px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: helpPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.konami-instruction.show {
+  display: block;
+}
+
+.konami-instruction strong {
+  color: var(--green-main);
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.konami-instruction div {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
 /* FIXED: MOBILE KONAMI BUTTON */
 .konami-button {
   position: fixed;
@@ -506,6 +541,15 @@ button:hover {
 <!-- FIXED: MOBILE KONAMI BUTTON -->
 <div class="konami-button" id="konamiBtn">🎮</div>
 
+<!-- KONAMI INSTRUCTION POPUP -->
+<div class="konami-instruction" id="konamiInstruction">
+  <strong>🎮 Konami Code</strong>
+  <div>Swipe on this button:</div>
+  <div>⬆️ ⬆️ ⬇️ ⬇️ ⬅️ ➡️ ⬅️ ➡️</div>
+  <div>Then tap twice!</div>
+  <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">Tap anywhere to close</div>
+</div>
+
 <div class="scale-wrapper" id="scaler">
   <div class="window">
 
@@ -535,8 +579,8 @@ button:hover {
     <!-- QUESTION SCREEN -->
     <div class="content" id="questionScreen">
       <!-- SECRET HEARTS (NEW - EASTER EGG) -->
-      <div class="secret-heart" style="top: 10px; left: 10px;" data-message="You found my first secret! 💕">💗</div>
-      <div class="secret-heart" style="top: 10px; right: 10px;" data-message="Keep looking... there's more! ✨">💝</div>
+      <div class="secret-heart" style="top: 10px; left: 10px;" data-message="Me when I love you! 💕">💗</div>
+      <div class="secret-heart" style="top: 10px; right: 10px;" data-message="Keep it up, baby! ✨">💝</div>
       <div class="secret-heart" style="bottom: 85px; left: 15px;" data-message="I hid these just for you 🥰">💖</div>
 
       <div class="text">Will you be my Valentine?</div>
@@ -571,9 +615,9 @@ button:hover {
       <div class="back-arrow" id="backToQuestion">←</div>
       
       <!-- SECRET HEART IN MENU (NEW - EASTER EGG) -->
-      <div class="secret-heart" style="bottom: 15px; right: 15px;" data-message="One more here too! 💗">💘</div>
+      <div class="secret-heart" style="bottom: 15px; right: 15px;" data-message="Hehehe 💗">💘</div>
 
-      <div class="text">HOORAY 💗</div>
+      <div class="text" style="font-size: 20px;">You're stuck with me now 💗</div>
 
       <div class="gif-container">
         <div class="tenor-gif-embed"
@@ -599,8 +643,8 @@ button:hover {
           Hi Baby,<br><br>
 
           Being with you feels easy in the best way. You make everything more fun just by being there,
-          whether we're laughing at something dumb, sitting quietly together, or completely locked in
-          on a movie we've both already seen but somehow never get tired of watching again.<br><br>
+          whether we're laughing at something dumb, sitting quietly together, or watching a show
+          or movie we've both already seen but somehow never get tired of watching again.<br><br>
 
           You're the best Fortnite buddy I could ever ask for.
           Playing with you never feels like just a game, it's my favorite way to spend time with you,
@@ -777,7 +821,7 @@ function checkAllEasterEggsFound() {
   
   if (allHeartsFound && konamiActivated && titleTripleClicked) {
     setTimeout(() => {
-      easterEggMsg.innerHTML = "🎉 MASTER EASTER EGG HUNTER! 🎉<br>You really went through all that just to impress me?<br>...okay fine, you're cute. 😳💗";
+      easterEggMsg.innerHTML = "🎉 MASTER EASTER EGG HUNTER! 🎉<br>You really went through all that just to impress me?<br>...okay fine, you're cute. 😳💗<br><br>I love you so much baby 💕";
       easterEggMsg.style.display = "block";
       easterEggMsg.style.fontSize = "18px";
       easterEggMsg.style.padding = "14px 18px";
@@ -901,18 +945,27 @@ document.addEventListener("keydown", (e) => {
 
 // Mobile button support
 const konamiBtn = document.getElementById("konamiBtn");
+const konamiInstruction = document.getElementById("konamiInstruction");
 let mobileTapSequence = [];
 const mobileKonamiPattern = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'tap', 'tap'];
 
 let touchStartX = 0;
 let touchStartY = 0;
+let longPressTimer;
 
+// Show instructions on long press
 konamiBtn.addEventListener('touchstart', (e) => {
   touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
+  
+  longPressTimer = setTimeout(() => {
+    konamiInstruction.classList.add('show');
+  }, 500);
 }, { passive: true });
 
 konamiBtn.addEventListener('touchend', (e) => {
+  clearTimeout(longPressTimer);
+  
   const touchEndX = e.changedTouches[0].clientX;
   const touchEndY = e.changedTouches[0].clientY;
   
@@ -938,6 +991,13 @@ konamiBtn.addEventListener('touchend', (e) => {
   if (JSON.stringify(mobileTapSequence) === JSON.stringify(mobileKonamiPattern)) {
     activateKonami();
     mobileTapSequence = [];
+  }
+});
+
+// Close instruction popup when clicking anywhere
+document.addEventListener('click', (e) => {
+  if (!konamiBtn.contains(e.target) && !konamiInstruction.contains(e.target)) {
+    konamiInstruction.classList.remove('show');
   }
 });
 
